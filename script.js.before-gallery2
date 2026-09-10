@@ -1,0 +1,120 @@
+const header = document.querySelector(".site-header");
+const menuButton = document.querySelector(".menu-button");
+const mainNav = document.querySelector(".main-nav");
+const navLinks = mainNav.querySelectorAll("a");
+const form = document.querySelector("#contact-form");
+
+function updateHeader() {
+  header.classList.toggle("is-scrolled", window.scrollY > 80);
+}
+
+function closeMenu() {
+  menuButton.setAttribute("aria-expanded", "false");
+  mainNav.classList.remove("is-open");
+  document.body.classList.remove("menu-open");
+}
+
+menuButton.addEventListener("click", () => {
+  const isOpen = menuButton.getAttribute("aria-expanded") === "true";
+  menuButton.setAttribute("aria-expanded", String(!isOpen));
+  mainNav.classList.toggle("is-open", !isOpen);
+  document.body.classList.toggle("menu-open", !isOpen);
+});
+
+navLinks.forEach((link) => link.addEventListener("click", closeMenu));
+
+window.addEventListener("scroll", updateHeader, { passive: true });
+updateHeader();
+
+form.addEventListener("submit", (event) => {
+  event.preventDefault();
+
+  const data = new FormData(form);
+  const name = data.get("name").toString().trim();
+  const email = data.get("email").toString().trim();
+  const subject = data.get("subject").toString().trim();
+  const message = data.get("message").toString().trim();
+
+  const body = [
+    `Dzień dobry,`,
+    ``,
+    message,
+    ``,
+    `Pozdrawiam,`,
+    name,
+    email
+  ].join("\n");
+
+  const mailto = `mailto:skmzaglebie@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  window.location.href = mailto;
+});
+
+document.querySelector("#year").textContent = new Date().getFullYear();
+
+
+const facebookGallery = document.querySelector("#facebook-gallery");
+
+async function loadFacebookGallery() {
+  if (!facebookGallery) return;
+
+  const facebookUrl = facebookGallery.dataset.facebookUrl;
+
+  try {
+    const response = await fetch("/api/facebook-gallery", {
+      headers: {
+        "Accept": "application/json"
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    const photos = await response.json();
+
+    if (!Array.isArray(photos) || photos.length === 0) {
+      throw new Error("No Facebook photos returned");
+    }
+
+    facebookGallery.innerHTML = "";
+
+    photos.slice(0, 9).forEach((photo) => {
+      const link = document.createElement("a");
+
+      link.className = "gallery-card";
+      link.href = photo.link || facebookUrl;
+      link.target = "_blank";
+      link.rel = "noopener";
+      link.setAttribute(
+        "aria-label",
+        "Otwórz zdjęcie na Facebooku"
+      );
+
+      const image = document.createElement("img");
+
+      image.src = photo.image;
+      image.alt =
+        photo.alt ||
+        "Zdjęcie z działalności SKM Zagłębie";
+
+      image.loading = "lazy";
+
+      link.appendChild(image);
+      facebookGallery.appendChild(link);
+    });
+
+  } catch (error) {
+
+    facebookGallery.innerHTML = `
+      <div class="gallery-status">
+        <strong>Galeria SKM Zagłębie</strong>
+        <span>
+          Zdjęcia będą pobierane automatycznie z Facebooka
+          po podłączeniu feedu.
+        </span>
+      </div>
+    `;
+  }
+}
+
+loadFacebookGallery();

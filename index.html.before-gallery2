@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sportowy Klub Modelarski Zagłębie w Czeladzi. Nauka latania modelami RC, wspólne treningi, zawody i pokazy modelarskie.">
+  <meta name="theme-color" content="#071426">
+
+  <meta property="og:title" content="Sportowy Klub Modelarski „Zagłębie”">
+  <meta property="og:description" content="Latać może każdy. Nauka pilotażu RC, lotnisko modelarskie i klubowa społeczność w Czeladzi.">
+  <meta property="og:type" content="website">
+
+  <title>Sportowy Klub Modelarski „Zagłębie”</title>
+  <link rel="icon" href="assets/logo.png" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <a class="skip-link" href="index.html#main">Przejdź do treści</a>
+
+  <header class="site-header" id="top">
+    <div class="container nav-wrap">
+      <a class="brand" href="index.html#top" aria-label="Sportowy Klub Modelarski Zagłębie — strona główna">
+        <img src="assets/logo.png" alt="" width="52" height="52">
+        <span class="brand-copy">
+          <strong>SKM „Zagłębie”</strong>
+          <small>Sportowy Klub Modelarski</small>
+        </span>
+      </a>
+
+      <button class="menu-button" type="button" aria-expanded="false" aria-controls="main-nav">
+        <span class="sr-only">Otwórz menu</span>
+        <span></span><span></span><span></span>
+      </button>
+
+      <nav class="main-nav" id="main-nav" aria-label="Nawigacja główna">
+        <a href="index.html#o-klubie">O klubie</a>
+        <a href="index.html#oferta">Co robimy</a>
+        <a href="index.html#pierwszy-lot">Pierwszy lot</a>
+        <a href="index.html#galeria">Galeria</a>
+        <a href="index.html#kontakt" class="nav-cta">Dołącz do nas</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero">
+      <div class="hero-sky" aria-hidden="true">
+        <div class="cloud cloud-one"></div>
+        <div class="cloud cloud-two"></div>
+        <img
+          class="hero-plane"
+          src="assets/spitfire.png%3Fv=3"
+          alt="Model samolotu Spitfire w locie">
+        <div class="runway-lines"></div>
+      </div>
+
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">Czeladź · Zagłębie Dąbrowskie</p>
+          <h1>Łączy nas<br><span>pasja.</span></h1>
+          <p class="hero-lead">
+            Klub dla doświadczonych modelarzy i osób, które dopiero chcą
+            rozpocząć przygodę z lotnictwem RC. Zapewniamy miejsce,
+            sprzęt do nauki oraz pomoc na każdym etapie.
+          </p>
+
+          <div class="hero-actions">
+            <a class="button button-primary" href="index.html#kontakt">Umów pierwszy lot</a>
+            <a class="button button-ghost" href="https://www.facebook.com/p/Sportowy-Klub-Modelarski-Zag%C5%82%C4%99bie-61574737886751/" target="_blank" rel="noopener">
+              Zobacz nas na Facebooku
+              <span aria-hidden="true">↗</span>
+            </a>
+          </div>
+
+          <div class="hero-points" aria-label="Najważniejsze informacje">
+            <div>
+              <strong>125 × 25 m</strong>
+              <span>trawiasty pas startowy</span>
+            </div>
+            <div>
+              <strong>Od podstaw</strong>
+              <span>nauka w systemie trener–uczeń</span>
+            </div>
+            <div>
+              <strong>Każdy wiek</strong>
+              <span>zapraszamy dzieci i dorosłych</span>
+            </div>
+          </div>
+        </div>
+
+        <aside class="flight-card" aria-label="Informacja dla początkujących">
+          <div class="flight-card-top">
+            <span class="live-dot"></span>
+            <span>Pierwszy raz?</span>
+          </div>
+          <div class="instrument">
+            <div class="instrument-ring">
+              <span class="instrument-plane">✈</span>
+            </div>
+            <span class="instrument-label">GOTOWY DO STARTU</span>
+          </div>
+          <h2>Nie musisz mieć własnego modelu.</h2>
+          <p>
+            Na początek wystarczy ciekawość. Pokażemy podstawy,
+            przygotujemy sprzęt i wykonamy pierwsze loty pod opieką instruktora.
+          </p>
+          <a href="index.html#pierwszy-lot">Jak wygląda pierwsza wizyta <span>→</span></a>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section section-intro" id="o-klubie">
+      <div class="container split-intro">
+        <div>
+          <p class="eyebrow dark">O klubie</p>
+          <h2>Łączy nas lotnictwo modelarskie</h2>
+        </div>
+        <div class="intro-copy">
+          <p>
+            Sportowy Klub Modelarski „Zagłębie” zrzesza modelarzy z regionu
+            i rozwija lokalne środowisko RC. Trenujemy, wymieniamy doświadczenia,
+            przygotowujemy modele oraz organizujemy wspólne wyjazdy i wydarzenia.
+          </p>
+          <p>
+            Stawiamy na bezpieczną naukę, dobrą atmosferę i praktyczne wsparcie —
+            od wyboru pierwszego modelu po bardziej zaawansowany pilotaż.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-services" id="oferta">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Co robimy</p>
+            <h2>Modelarstwo w praktyce</h2>
+          </div>
+          <p>W klubie jest miejsce zarówno na spokojną naukę, jak i zaawansowane projekty oraz sportową rywalizację.</p>
+        </div>
+
+        <div class="service-grid">
+          <article class="service-card featured">
+            <span class="service-number">01</span>
+            <div class="service-icon" aria-hidden="true">⌁</div>
+            <h3>Nauka latania RC</h3>
+            <p>
+              Bezpieczne loty w systemie trener–uczeń, przy którym instruktor
+              może w każdej chwili przejąć sterowanie.
+            </p>
+            <ul>
+              <li>sprzęt dostępny na miejscu</li>
+              <li>podstawy obsługi i bezpieczeństwa</li>
+              <li>wsparcie doświadczonych pilotów</li>
+            </ul>
+          </article>
+
+          <article class="service-card">
+            <span class="service-number">02</span>
+            <div class="service-icon" aria-hidden="true">▱</div>
+            <h3>Lotnisko klubowe</h3>
+            <p>
+              Trawiasty pas startowy w Czeladzi zapewnia przestrzeń do treningów,
+              oblotów i wspólnego latania.
+            </p>
+            <ul>
+              <li>pas o wymiarach 125 × 25 m</li>
+              <li>regularna pielęgnacja terenu</li>
+              <li>lokalna społeczność modelarzy</li>
+            </ul>
+          </article>
+
+          <article class="service-card">
+            <span class="service-number">03</span>
+            <div class="service-icon" aria-hidden="true">✦</div>
+            <h3>Pokazy i pikniki</h3>
+            <p>
+              Prezentujemy modele podczas wydarzeń rodzinnych i pokazów,
+              w tym nietypowe latające konstrukcje i postacie.
+            </p>
+            <ul>
+              <li>atrakcje dla publiczności</li>
+              <li>prezentacje modeli</li>
+              <li>kontakt w sprawie współpracy</li>
+            </ul>
+          </article>
+
+          <article class="service-card">
+            <span class="service-number">04</span>
+            <div class="service-icon" aria-hidden="true">◎</div>
+            <h3>Zawody i wyjazdy</h3>
+            <p>
+              Uczestniczymy w spotkaniach, zawodach Aircombat i wydarzeniach
+              modelarskich w Polsce oraz za granicą.
+            </p>
+            <ul>
+              <li>wspólne treningi</li>
+              <li>wymiana doświadczeń</li>
+              <li>sportowa rywalizacja</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section first-flight" id="pierwszy-lot">
+      <div class="container first-flight-grid">
+        <div class="flight-visual" aria-hidden="true">
+          <div class="radar">
+            <span class="radar-sweep"></span>
+            <span class="radar-dot dot-one"></span>
+            <span class="radar-dot dot-two"></span>
+            <span class="radar-dot dot-three"></span>
+            <span class="radar-plane">✈</span>
+          </div>
+          <div class="coordinates">
+            <span>FLIGHT MODE</span>
+            <strong>TRAINER</strong>
+            <small>CZELADŹ · PL</small>
+          </div>
+        </div>
+
+        <div>
+          <p class="eyebrow">Pierwszy lot</p>
+          <h2>Jak zacząć?</h2>
+          <p class="section-lead">
+            Nie potrzebujesz doświadczenia ani własnego wyposażenia.
+            Umów wizytę, a przeprowadzimy Cię przez pierwsze kroki.
+          </p>
+
+          <ol class="steps">
+            <li>
+              <span>1</span>
+              <div>
+                <h3>Skontaktuj się z nami</h3>
+                <p>Napisz wiadomość lub zadzwoń, aby uzgodnić dogodny termin i warunki pogodowe.</p>
+              </div>
+            </li>
+            <li>
+              <span>2</span>
+              <div>
+                <h3>Poznaj sprzęt i zasady</h3>
+                <p>Na lotnisku omówimy przygotowanie modelu, sterowanie i podstawowe procedury bezpieczeństwa.</p>
+              </div>
+            </li>
+            <li>
+              <span>3</span>
+              <div>
+                <h3>Wykonaj pierwszy lot</h3>
+                <p>Polatasz z instruktorem przy użyciu połączonych aparatur w systemie trener–uczeń.</p>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section class="section gallery-section" id="galeria">
+      <div class="container">
+
+        <div class="section-heading gallery-heading">
+          <div>
+            <p class="eyebrow dark">Galeria</p>
+            <h2>Z życia klubu</h2>
+          </div>
+
+          <p>
+            Najnowsze zdjęcia z działalności
+            Sportowego Klubu Modelarskiego „Zagłębie”.
+          </p>
+        </div>
+
+        <div
+          class="facebook-gallery"
+          id="facebook-gallery"
+          data-facebook-url="https://www.facebook.com/profile.php?id=61574737886751&amp;sk=photos"
+          aria-live="polite">
+
+          <div class="gallery-status">
+            <strong>Galeria SKM Zagłębie</strong>
+            <span>Zdjęcia z naszego Facebooka.</span>
+          </div>
+
+        </div>
+
+        <div class="gallery-actions">
+          <a
+            class="button button-primary"
+            href="https://www.facebook.com/profile.php?id=61574737886751&amp;sk=photos"
+            target="_blank"
+            rel="noopener">
+
+            Zobacz wszystkie zdjęcia na Facebooku
+            <span aria-hidden="true">↗</span>
+          </a>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="section contact-section" id="kontakt">
+      <div class="container contact-wrap">
+        <div class="contact-copy">
+          <p class="eyebrow">Kontakt</p>
+          <h2>Spotkajmy się<br>na lotnisku.</h2>
+          <p>
+            Chcesz rozpocząć naukę, dołączyć do stowarzyszenia albo zaprosić
+            klub na wydarzenie? Napisz lub zadzwoń.
+          </p>
+
+          <div class="contact-list">
+            <a href="mailto:skmzaglebie@gmail.com">
+              <span class="contact-icon" aria-hidden="true">@</span>
+              <span>
+                <small>E-mail</small>
+                <strong>skmzaglebie@gmail.com</strong>
+              </span>
+            </a>
+
+            <a href="tel:+48576240903">
+              <span class="contact-icon" aria-hidden="true">☎</span>
+              <span>
+                <small>Andrzej</small>
+                <strong>576 240 903</strong>
+              </span>
+            </a>
+
+            <a href="tel:+48782386982">
+              <span class="contact-icon" aria-hidden="true">☎</span>
+              <span>
+                <small>Kamil</small>
+                <strong>782 386 982</strong>
+              </span>
+            </a>
+
+            <a href="https://maps.app.goo.gl/TKtAhALiyHz6SfuT7" target="_blank" rel="noopener">
+              <span class="contact-icon" aria-hidden="true">⌖</span>
+              <span>
+                <small>Lotnisko klubowe</small>
+                <strong>Lotnisko modelarskie SKM Zagłębie</strong>
+              </span>
+            </a>
+          </div>
+        </div>
+
+        <form class="contact-form" id="contact-form">
+          <div class="form-heading">
+            <span>FORMULARZ KONTAKTOWY</span>
+            <strong>Napisz do klubu</strong>
+          </div>
+
+          <label>
+            Imię
+            <input type="text" name="name" autocomplete="name" required placeholder="Twoje imię">
+          </label>
+
+          <label>
+            E-mail
+            <input type="email" name="email" autocomplete="email" required placeholder="twoj@email.pl">
+          </label>
+
+          <label>
+            Temat
+            <select name="subject">
+              <option value="Pierwszy lot i nauka pilotażu">Pierwszy lot i nauka pilotażu</option>
+              <option value="Członkostwo w klubie">Członkostwo w klubie</option>
+              <option value="Pokaz na wydarzeniu">Pokaz na wydarzeniu</option>
+              <option value="Inna sprawa">Inna sprawa</option>
+            </select>
+          </label>
+
+          <label>
+            Wiadomość
+            <textarea name="message" rows="5" required placeholder="Napisz, w czym możemy pomóc..."></textarea>
+          </label>
+
+          <button class="button button-primary form-submit" type="submit">
+            Utwórz wiadomość e-mail
+            <span aria-hidden="true">→</span>
+          </button>
+
+          <p class="form-note">Formularz otworzy wiadomość w Twoim programie pocztowym.</p>
+        </form>
+      </div>
+      <div class="container contact-map-wrap">
+        <div class="contact-map-header">
+          <div>
+            <p class="eyebrow">Nasza lokalizacja</p>
+            <h3>Lotnisko modelarskie SKM Zagłębie</h3>
+          </div>
+
+          <a
+            class="map-link"
+            href="https://maps.app.goo.gl/TKtAhALiyHz6SfuT7"
+            target="_blank"
+            rel="noopener">
+            Otwórz w Google Maps <span aria-hidden="true">↗</span>
+          </a>
+        </div>
+
+        <div class="contact-map">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4197.533085974027!2d19.0527901734413!3d50.3067733589939!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4716d1006d7a3347%3A0xc7c1de75717c474c!2sLotnisko%20modelarskie%20SKM%20Zag%C5%82%C4%99bie!5e1!3m2!1sen!2spl!4v1789069472587!5m2!1sen!2spl"
+            title="Mapa lotniska modelarskiego SKM Zagłębie"
+            width="600"
+            height="450"
+            style="border:0;"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="strict-origin-when-cross-origin">
+          </iframe>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <img src="assets/logo.png" alt="" width="48" height="48">
+        <div>
+          <strong>Sportowy Klub Modelarski „Zagłębie”</strong>
+          <span>Latać każdy może.</span>
+        </div>
+      </div>
+
+      <div class="footer-links">
+        <a href="index.html#o-klubie">O klubie</a>
+        <a href="index.html#oferta">Co robimy</a>
+        <a href="index.html#kontakt">Kontakt</a>
+        <a href="https://www.facebook.com/p/Sportowy-Klub-Modelarski-Zag%C5%82%C4%99bie-61574737886751/" target="_blank" rel="noopener">Facebook ↗</a>
+      </div>
+
+      <p class="copyright">© <span id="year"></span> SKM „Zagłębie”</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
