@@ -162,118 +162,57 @@
       </div>
     </section>
     <section class="section gallery-section" id="galeria">
-      <div class="container">
-
-        <div class="section-heading gallery-heading">
-          <div>
-            <p class="eyebrow dark">Galeria</p>
-            <h2>Z życia klubu</h2>
-          </div>
-
-          <p>
-            Samoloty, samochody, łodzie, zawody, spotkania i wspólne
-            modelarskie chwile SKM „Zagłębie”.
-          </p>
-        </div>
-
-        <div class="club-gallery">
-
-          <a class="gallery-photo"
-             href="assets/gallery/01.jpg"
-             target="_blank">
-            <img src="assets/gallery/01.jpg"
-                 alt="SKM Zagłębie"
-                 loading="lazy"
-                 onerror="this.closest('.gallery-photo').remove()">
-          </a>
-
-          <a class="gallery-photo"
-             href="assets/gallery/02.jpg"
-             target="_blank">
-            <img src="assets/gallery/02.jpg"
-                 alt="SKM Zagłębie"
-                 loading="lazy"
-                 onerror="this.closest('.gallery-photo').remove()">
-          </a>
-
-          <a class="gallery-photo"
-             href="assets/gallery/03.jpg"
-             target="_blank">
-            <img src="assets/gallery/03.jpg"
-                 alt="SKM Zagłębie"
-                 loading="lazy"
-                 onerror="this.closest('.gallery-photo').remove()">
-          </a>
-
-          <a class="gallery-photo"
-             href="assets/gallery/04.jpg"
-             target="_blank">
-            <img src="assets/gallery/04.jpg"
-                 alt="SKM Zagłębie"
-                 loading="lazy"
-                 onerror="this.closest('.gallery-photo').remove()">
-          </a>
-
-          <a class="gallery-photo"
-             href="assets/gallery/05.jpg"
-             target="_blank">
-            <img src="assets/gallery/05.jpg"
-                 alt="SKM Zagłębie"
-                 loading="lazy"
-                 onerror="this.closest('.gallery-photo').remove()">
-          </a>
-
-          <a class="gallery-photo"
-             href="assets/gallery/06.jpg"
-             target="_blank">
-            <img src="assets/gallery/06.jpg"
-                 alt="SKM Zagłębie"
-                 loading="lazy"
-                 onerror="this.closest('.gallery-photo').remove()">
-          </a>
-
-          <a class="gallery-photo"
-             href="assets/gallery/07.jpg"
-             target="_blank">
-            <img src="assets/gallery/07.jpg"
-                 alt="SKM Zagłębie"
-                 loading="lazy"
-                 onerror="this.closest('.gallery-photo').remove()">
-          </a>
-
-          <a class="gallery-photo"
-             href="assets/gallery/08.jpg"
-             target="_blank">
-            <img src="assets/gallery/08.jpg"
-                 alt="SKM Zagłębie"
-                 loading="lazy"
-                 onerror="this.closest('.gallery-photo').remove()">
-          </a>
-
-          <a class="gallery-photo"
-             href="assets/gallery/09.jpg"
-             target="_blank">
-            <img src="assets/gallery/09.jpg"
-                 alt="SKM Zagłębie"
-                 loading="lazy"
-                 onerror="this.closest('.gallery-photo').remove()">
-          </a>
-
-        </div>
-
-        <div class="gallery-actions">
-          <a
-            class="button button-primary"
-            href="https://www.facebook.com/profile.php?id=61574737886751&amp;sk=photos"
-            target="_blank"
-            rel="noopener">
-            Więcej zdjęć na Facebooku
-            <span aria-hidden="true">↗</span>
-          </a>
-        </div>
-
+  <div class="container">
+    <div class="section-heading gallery-heading">
+      <div>
+        <p class="eyebrow dark">Galeria</p>
+        <h2>Życie naszego klubu</h2>
       </div>
-    </section>
+      <p>Najnowsze zdjęcia publikowane przez SKM Zagłębie na Facebooku.</p>
+    </div>
+
+    <div class="gallery-shell">
+      <button class="gallery-nav gallery-prev"
+              id="gallery-prev"
+              type="button"
+              aria-label="Poprzednie zdjęcia">←</button>
+
+      <div class="club-gallery"
+           id="facebook-gallery"
+           aria-live="polite">
+        <div class="gallery-status">Ładowanie zdjęć…</div>
+      </div>
+
+      <button class="gallery-nav gallery-next"
+              id="gallery-next"
+              type="button"
+              aria-label="Następne zdjęcia">→</button>
+    </div>
+  </div>
+</section>
+
+<div class="gallery-lightbox"
+     id="gallery-lightbox"
+     aria-hidden="true">
+  <button class="lightbox-close"
+          id="lightbox-close"
+          type="button"
+          aria-label="Zamknij">×</button>
+
+  <button class="lightbox-nav lightbox-prev"
+          id="lightbox-prev"
+          type="button"
+          aria-label="Poprzednie zdjęcie">‹</button>
+
+  <img id="lightbox-image"
+       src=""
+       alt="Zdjęcie z galerii SKM Zagłębie">
+
+  <button class="lightbox-nav lightbox-next"
+          id="lightbox-next"
+          type="button"
+          aria-label="Następne zdjęcie">›</button>
+</div>
 
 
 
