@@ -1852,92 +1852,225 @@ img.hero-plane {
 
 
 
-/* ===== SKM REAL PHOTO GALLERY ===== */
+/* ===== FACEBOOK HORIZONTAL GALLERY ===== */
 
 .gallery-section {
   background: var(--cream);
+  overflow: hidden;
 }
 
 .gallery-heading > p {
-  max-width: 500px;
+  max-width: 520px;
   color: var(--muted);
 }
 
+.gallery-shell {
+  position: relative;
+  margin-top: 30px;
+}
+
 .club-gallery {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
   gap: 18px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  padding: 5px 2px 18px;
+}
+
+.club-gallery::-webkit-scrollbar {
+  display: none;
 }
 
 .gallery-photo {
+  flex: 0 0 calc((100% - 54px) / 4);
+  min-width: 0;
   position: relative;
   display: block;
+  padding: 0;
+  border: 0;
   overflow: hidden;
   aspect-ratio: 4 / 3;
   border-radius: 22px;
   background: #dfe5e9;
   box-shadow: 0 12px 35px rgba(7,20,38,.10);
+  cursor: pointer;
+  scroll-snap-align: start;
 }
 
 .gallery-photo img {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition:
-    transform .35s ease,
-    filter .35s ease;
-}
-
-.gallery-photo::after {
-  content: "↗";
-  position: absolute;
-  right: 15px;
-  top: 15px;
-  display: grid;
-  width: 38px;
-  height: 38px;
-  place-items: center;
-  border-radius: 50%;
-  background: rgba(7,20,38,.72);
-  color: #fff;
-  opacity: 0;
-  transform: translateY(-5px);
-  transition:
-    opacity .25s ease,
-    transform .25s ease;
+  transition: transform .35s ease;
 }
 
 .gallery-photo:hover img {
   transform: scale(1.045);
 }
 
+.gallery-photo::after {
+  content: "⤢";
+  position: absolute;
+  right: 14px;
+  top: 14px;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(7,20,38,.72);
+  color: #fff;
+  font-size: 18px;
+  opacity: 0;
+  transition: opacity .25s ease;
+}
+
 .gallery-photo:hover::after {
   opacity: 1;
-  transform: translateY(0);
 }
 
-.gallery-actions {
-  display: flex;
+.gallery-status {
+  width: 100%;
+  padding: 50px 20px;
+  text-align: center;
+  color: var(--muted);
+}
+
+.gallery-nav {
+  position: absolute;
+  z-index: 5;
+  top: 50%;
+  transform: translateY(-60%);
+  width: 48px;
+  height: 48px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(7,20,38,.88);
+  color: #fff;
+  font-size: 25px;
+  cursor: pointer;
+  box-shadow: 0 10px 25px rgba(7,20,38,.20);
+}
+
+.gallery-prev {
+  left: -24px;
+}
+
+.gallery-next {
+  right: -24px;
+}
+
+.gallery-lightbox {
+  position: fixed;
+  z-index: 9999;
+  inset: 0;
+  display: none;
+  align-items: center;
   justify-content: center;
-  margin-top: 35px;
+  padding: 35px;
+  background: rgba(3,9,17,.94);
 }
 
-@media (max-width: 900px) {
-  .club-gallery {
-    grid-template-columns: repeat(2, 1fr);
-  }
+.gallery-lightbox.is-open {
+  display: flex;
 }
 
-@media (max-width: 560px) {
-  .club-gallery {
-    grid-template-columns: 1fr;
-  }
+.gallery-lightbox img {
+  max-width: min(1200px, 90vw);
+  max-height: 88vh;
+  object-fit: contain;
+  border-radius: 10px;
+  box-shadow: 0 20px 80px rgba(0,0,0,.45);
+}
 
+.lightbox-close,
+.lightbox-nav {
+  position: fixed;
+  z-index: 10000;
+  border: 0;
+  background: rgba(255,255,255,.12);
+  color: #fff;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+}
+
+.lightbox-close {
+  top: 22px;
+  right: 25px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  font-size: 32px;
+}
+
+.lightbox-nav {
+  top: 50%;
+  transform: translateY(-50%);
+  width: 54px;
+  height: 70px;
+  border-radius: 14px;
+  font-size: 42px;
+}
+
+.lightbox-prev {
+  left: 25px;
+}
+
+.lightbox-next {
+  right: 25px;
+}
+
+@media (max-width: 1000px) {
   .gallery-photo {
+    flex-basis: calc((100% - 36px) / 3);
+  }
+}
+
+@media (max-width: 760px) {
+  .gallery-photo {
+    flex-basis: 47%;
+  }
+
+  .gallery-nav {
+    display: none;
+  }
+
+  .gallery-shell {
+    margin-right: -20px;
+  }
+
+  .club-gallery {
+    padding-right: 20px;
+  }
+
+  .gallery-lightbox {
+    padding: 15px;
+  }
+
+  .lightbox-nav {
+    width: 46px;
+    height: 60px;
+  }
+
+  .lightbox-prev {
+    left: 8px;
+  }
+
+  .lightbox-next {
+    right: 8px;
+  }
+}
+
+@media (max-width: 520px) {
+  .gallery-photo {
+    flex-basis: 82%;
     aspect-ratio: 16 / 11;
   }
 }
-
 
 
 /* ===== Hero cleanup - right-side card removed ===== */

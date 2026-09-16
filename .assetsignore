@@ -1,0 +1,12 @@
+.git
+.git/**
+.dev.vars
+.env
+.env.*
+*.bak
+*.before-*
+src
+src/**
+wrangler.jsonc
+.gitignore
+.assetsignore
