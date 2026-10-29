@@ -16,6 +16,8 @@ The deployed secrets and account-specific variables are intentionally not stored
 
 Do not deploy from an incomplete checkout. A production backup must include the active Worker version, D1 export, all KV media objects, and live static assets. Database dumps, sessions, member records, uploaded photos, `.dev.vars`, and Wrangler caches must never be committed.
 
+The GitHub `main` branch is connected to an automatic Cloudflare production deployment. Treat every push to `main` as a production release. Worker version preview URLs are disabled to avoid exposing discarded preview assets.
+
 `schema/production.sql` contains schema only—no production rows or private member data.
 
 ## Database migrations
