@@ -1,5 +1,7 @@
 .git
 .git/**
+.wrangler
+.wrangler/**
 .dev.vars
 .env
 .env.*
