@@ -10,3 +10,12 @@ src/**
 wrangler.jsonc
 .gitignore
 .assetsignore
+README.md
+schema
+schema/**
+migrations
+migrations/**
+package.json
+package-lock.json
+test
+test/**

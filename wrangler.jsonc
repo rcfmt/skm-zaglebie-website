@@ -2,11 +2,29 @@
   "name": "skm-cf",
   "main": "src/worker.js",
   "compatibility_date": "2026-09-16",
+  "keep_vars": true,
   "assets": {
     "directory": ".",
     "binding": "ASSETS",
     "run_worker_first": [
-      "/api/*"
+      "/api/*",
+      "/media/*"
     ]
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "skm-members",
+      "database_id": "95856ddb-a74d-4b19-a16c-6d03c9df7c8e"
+    }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "MEDIA",
+      "id": "ddb36930086348b49ec87f252f4c04aa"
+    }
+  ],
+  "ai": {
+    "binding": "AI"
   }
 }

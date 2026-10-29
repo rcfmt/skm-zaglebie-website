@@ -1,0 +1,19 @@
+# SKM Zagłębie website
+
+Source for `https://skm-zaglebie.pl`, including the public website and the authenticated Members → Hangar application.
+
+## Production resources
+
+- Cloudflare Worker: `skm-cf`
+- D1 binding: `DB` (`skm-members`)
+- KV binding: `MEDIA`
+- Workers AI binding: `AI`
+- Static Assets binding: `ASSETS`
+
+The deployed secrets and account-specific variables are intentionally not stored in Git. The Worker expects `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `FB_PAGE_ACCESS_TOKEN`, and `ADMIN_EMAIL` in the Cloudflare environment. Existing production variables are preserved by `keep_vars`.
+
+## Safety
+
+Do not deploy from an incomplete checkout. A production backup must include the active Worker version, D1 export, all KV media objects, and live static assets. Database dumps, sessions, member records, uploaded photos, `.dev.vars`, and Wrangler caches must never be committed.
+
+`schema/production.sql` contains schema only—no production rows or private member data.

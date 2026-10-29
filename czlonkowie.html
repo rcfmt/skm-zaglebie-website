@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Strefa członków Sportowego Klubu Modelarskiego Zagłębie.">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#071426">
+  <title>Strefa klubowicza — SKM „Zagłębie”</title>
+  <link rel="icon" href="assets/logo.png" type="image/png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="member-page">
+  <a class="skip-link" href="#main">Przejdź do treści</a>
+
+  <header class="member-header">
+    <div class="container member-nav">
+      <a class="brand" href="index.html" aria-label="SKM Zagłębie — strona główna">
+        <img src="assets/logo.png" alt="" width="48" height="48">
+        <span class="brand-copy"><strong>SKM „Zagłębie”</strong><small>Strefa klubowicza</small></span>
+      </a>
+      <nav aria-label="Nawigacja strefy klubowej">
+        <a href="modele.html">Modele publiczne</a>
+        <a href="index.html">Strona główna</a>
+        <button class="member-link-button" id="logout-button" type="button" hidden>Wyloguj się</button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="member-main">
+    <section class="member-login container" id="login-view">
+      <div class="login-copy">
+        <p class="eyebrow">Tylko dla członków klubu</p>
+        <h1>Klubowy hangar<br><span>w jednym miejscu.</span></h1>
+        <p>Po zalogowaniu zobaczysz modele i wyposażenie innych klubowiczów, uzupełnisz swój profil oraz dodasz własne konstrukcje.</p>
+        <a class="google-button" id="google-login" href="/api/auth/google/start">
+          <span class="google-mark" aria-hidden="true">G</span>
+          Zaloguj się przez Google
+        </a>
+        <p class="login-note">Dostęp jest możliwy z zaproszenia wysłanego przez administratora klubu. Nie zapisujemy osobnego hasła — bezpieczeństwo i MFA obsługuje Twoje konto Google.</p>
+      </div>
+      <aside class="approval-card">
+        <span class="approval-icon" aria-hidden="true">✓</span>
+        <h2>Jak uzyskać dostęp?</h2>
+        <ol>
+          <li>Odbierz zaproszenie od administratora klubu.</li>
+          <li>Otwórz indywidualny link z zaproszenia.</li>
+          <li>Zaloguj się wskazanym kontem Google.</li>
+        </ol>
+        <p>Pytania: <a href="mailto:skmzaglebie@gmail.com">skmzaglebie@gmail.com</a></p>
+      </aside>
+    </section>
+
+    <div class="container status-banner" id="status-banner" role="status" hidden></div>
+
+    <section class="member-dashboard container" id="dashboard-view" hidden>
+      <div class="dashboard-welcome">
+        <div>
+          <p class="eyebrow dark">Strefa członkowska</p>
+          <h1>Witaj, <span id="welcome-name">klubowiczu</span></h1>
+          <p>Wewnętrzny hangar jest widoczny dla wszystkich zatwierdzonych członków klubu.</p>
+        </div>
+        <button class="button button-primary" id="new-model-button" type="button">+ Dodaj model</button>
+      </div>
+
+      <div class="dashboard-grid">
+        <aside class="profile-panel panel">
+          <div class="profile-heading">
+            <div class="profile-avatar-wrap">
+              <img id="profile-avatar" class="profile-avatar" src="assets/logo.png" alt="Zdjęcie profilowe">
+            </div>
+            <div><span>Twój profil</span><strong id="profile-name"></strong></div>
+          </div>
+
+          <form id="avatar-form" class="avatar-form">
+            <div class="avatar-upload-row">
+              <label class="file-field">Zdjęcie pilota
+                <input type="file" name="image" accept="image/jpeg,image/png,image/webp" required>
+              </label>
+              <button class="small-button" type="submit">Wgraj</button>
+            </div>
+            <p class="avatar-help">Wybierz pionowe lub kwadratowe zdjęcie, na którym wyraźnie widać pilota. Zdjęcie zostanie automatycznie sprawdzone — logo, model samolotu ani przypadkowa grafika nie zostaną przyjęte.</p>
+            <label class="portrait-confirm"><input type="checkbox" name="portraitConfirmed" value="yes" required><span>Potwierdzam, że zdjęcie przedstawia pilota.</span></label>
+          </form>
+
+          <form id="profile-form" class="stack-form">
+            <label>Imię i nazwisko / nazwa profilowa
+              <input type="text" name="displayName" minlength="2" maxlength="80" required>
+            </label>
+            <label>O mnie
+              <textarea name="bio" rows="5" maxlength="1200" placeholder="Napisz kilka słów o swoim modelarstwie..."></textarea>
+            </label>
+            <label class="check-row">
+              <input type="checkbox" name="profilePublic">
+              <span>Pokaż mój profil przy modelach publicznych</span>
+            </label>
+            <button class="small-button dark" type="submit">Zapisz profil</button>
+          </form>
+        </aside>
+
+        <div class="dashboard-content">
+          <section class="panel admin-panel" id="admin-panel" hidden>
+            <div class="panel-title"><div><span>Administracja</span><h2>Członkowie i zaproszenia</h2></div></div>
+
+            <form id="invite-form" class="invite-form">
+              <label>Adres Gmail nowego członka
+                <input type="email" name="email" autocomplete="email" placeholder="czlonek@gmail.com" required>
+              </label>
+              <button class="small-button dark" type="submit">Utwórz zaproszenie</button>
+            </form>
+            <p class="admin-help">Zaproszenie jest ważne przez 14 dni i działa tylko z podanym kontem Google. Nowa osoba otrzyma zwykłe konto członka.</p>
+            <div class="invite-result" id="invite-result" hidden>
+              <strong>Zaproszenie gotowe</strong>
+              <div class="invite-link-row">
+                <input id="invite-link" type="text" readonly>
+                <button class="small-button" id="copy-invite" type="button">Kopiuj link</button>
+              </div>
+              <a id="email-invite" class="text-link" href="#">Wyślij przez e-mail</a>
+            </div>
+
+            <div class="admin-subsection">
+              <div class="panel-title compact"><div><span>Aktywne zaproszenia</span><h3 id="invitation-count">0</h3></div></div>
+              <div id="invitation-list" class="pending-list"></div>
+            </div>
+
+            <div class="admin-subsection">
+              <div class="panel-title compact"><div><span>Członkowie klubu</span><h3 id="member-count">0</h3></div></div>
+              <div id="member-list" class="pending-list"></div>
+            </div>
+
+            <div class="admin-subsection" id="pending-section" hidden>
+              <div class="panel-title compact"><div><span>Starsze zgłoszenia oczekujące</span><h3 id="pending-count">0</h3></div></div>
+              <div id="pending-list" class="pending-list"></div>
+            </div>
+          </section>
+
+          <section class="panel" id="model-editor" hidden>
+            <div class="panel-title">
+              <div><span>Twój hangar</span><h2 id="editor-title">Dodaj model</h2></div>
+              <button class="icon-button" id="close-editor" type="button" aria-label="Zamknij formularz">×</button>
+            </div>
+            <form id="model-form" class="model-form">
+              <input type="hidden" name="id">
+              <h3 class="form-section-title">Dane modelu</h3>
+              <div class="form-grid">
+                <label>Nazwa modelu *<input name="name" maxlength="120" required></label>
+                <label>Kategoria<input name="category" maxlength="80" placeholder="np. samolot, szybowiec, helikopter"></label>
+                <label>Pochodzenie modelu
+                  <select name="buildType" id="build-type-select">
+                    <option value="">Wybierz</option>
+                    <option value="Kupiony — RTF / BNF / PNP">Kupiony — RTF / BNF / PNP</option>
+                    <option value="Kupiony — ARF">Kupiony — ARF</option>
+                    <option value="Zbudowany z zestawu">Zbudowany z zestawu</option>
+                    <option value="Wydrukowany w 3D">Wydrukowany w 3D</option>
+                    <option value="Zbudowany z planów">Zbudowany z planów</option>
+                    <option value="Zaprojektowany i zbudowany od zera przez członka">Zaprojektowany i zbudowany od zera przez członka</option>
+                    <option value="Inne">Inne</option>
+                  </select>
+                </label>
+                <label>Producent / marka<input name="manufacturer" maxlength="120" placeholder="dla modelu lub zestawu kupionego"></label>
+                <label>Projektant / źródło projektu<input name="designSource" maxlength="200" placeholder="autor, plan, pliki STL lub własny projekt"></label>
+                <label>Materiały i technologia budowy<input name="constructionMaterials" maxlength="300" placeholder="balsa, laminat, pianka, PLA/LW-PLA, sklejka..."></label>
+                <label>Skala<input name="scale" maxlength="50" placeholder="np. 1:5"></label>
+                <label>Rozpiętość<input name="wingspan" maxlength="50" placeholder="np. 2200 mm"></label>
+                <label>Masa<input name="weight" maxlength="50" placeholder="np. 6,4 kg"></label>
+                <label>Rodzaj napędu
+                  <select name="propulsion" id="propulsion-select">
+                    <option value="">Wybierz</option>
+                    <option value="Elektryczny">Elektryczny</option>
+                    <option value="Spalinowy — benzyna">Spalinowy — benzyna</option>
+                    <option value="Spalinowy — żarowy / metanol">Spalinowy — żarowy / metanol</option>
+                    <option value="Turbina">Turbina</option>
+                    <option value="Szybowiec / bez napędu">Szybowiec / bez napędu</option>
+                    <option value="Inny">Inny</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="equipment-group" data-power-group="powered">
+                <h3 class="form-section-title">Napęd</h3>
+                <div class="form-grid">
+                  <label>Silnik / turbina<input name="motorEngine" maxlength="160" placeholder="producent, model, KV lub pojemność"></label>
+                  <label>Śmigło / wirnik<input name="propeller" maxlength="120" placeholder="rozmiar, skok, producent"></label>
+                </div>
+              </div>
+
+              <div class="equipment-group" data-power-group="electric">
+                <h3 class="form-section-title">Wyposażenie elektryczne</h3>
+                <div class="form-grid">
+                  <label>Regulator ESC<input name="esc" maxlength="120" placeholder="producent, model i prąd"></label>
+                  <label>BEC / UBEC<input name="bec" maxlength="120" placeholder="napięcie i wydajność prądowa"></label>
+                  <label>Akumulator napędowy<input name="battery" maxlength="120" placeholder="np. LiPo 6S 5000 mAh 50C"></label>
+                  <label>Złącza akumulatora<input name="batteryConnector" maxlength="80" placeholder="np. XT90, EC5, QS8"></label>
+                </div>
+              </div>
+
+              <div class="equipment-group" data-power-group="combustion">
+                <h3 class="form-section-title">Wyposażenie spalinowe</h3>
+                <div class="form-grid">
+                  <label>Zapłon / świeca żarowa / ECU<input name="ignition" maxlength="160" placeholder="moduł zapłonowy, świeca, ECU, zasilanie"></label>
+                  <label>Układ paliwowy<input name="fuelSystem" maxlength="300" placeholder="paliwo, zbiornik, pompa, filtr, przewody"></label>
+                  <label>Układ wydechowy<input name="exhaustSystem" maxlength="200" placeholder="tłumik, rezonans, kolektor"></label>
+                </div>
+              </div>
+
+              <h3 class="form-section-title">Sterowanie i elektronika pokładowa</h3>
+              <div class="form-grid">
+                <label>Aparatura<input name="radio" maxlength="120"></label>
+                <label>Odbiornik<input name="receiver" maxlength="120"></label>
+                <label>Zasilanie odbiornika i serw<input name="receiverPower" maxlength="160" placeholder="BEC, PowerBox, akumulator RX, redundancja"></label>
+                <label>Serwa<input name="servos" maxlength="200" placeholder="typy i liczba: lotki, klapy, wysokość, kierunek, gaz..."></label>
+                <label>Stabilizacja / żyroskop<input name="stabilization" maxlength="160" placeholder="np. AS3X, iGyro, Cortex"></label>
+                <label>Telemetria i czujniki<input name="telemetry" maxlength="300" placeholder="napięcie, prąd, RPM, temperatura, GPS, wysokość..."></label>
+              </div>
+
+              <h3 class="form-section-title">Systemy dodatkowe</h3>
+              <div class="form-grid">
+                <label>Podwozie / chowane podwozie<input name="landingGear" maxlength="200" placeholder="stałe, elektryczne, pneumatyczne, sterowanie kołem"></label>
+                <label>Hamulce<input name="brakes" maxlength="160" placeholder="mechaniczne, elektryczne, pneumatyczne"></label>
+                <label>Oświetlenie<input name="lighting" maxlength="200" placeholder="nawigacyjne, lądowania, sterownik"></label>
+                <label>System dymu<input name="smokeSystem" maxlength="200" placeholder="pompa, zbiornik, płyn"></label>
+                <label>FPV / kamera<input name="fpvSystem" maxlength="300" placeholder="kamera, nadajnik wideo, antena, OSD"></label>
+                <label>Inne systemy<input name="auxiliarySystems" maxlength="600" placeholder="hak holowniczy, zrzut, spadochron, sekwencer drzwi..."></label>
+              </div>
+
+              <label>Pozostałe wyposażenie i uwagi<textarea name="equipment" rows="3" maxlength="1200" placeholder="Wpisz wszystko, czego nie obejmują pola powyżej."></textarea></label>
+              <label>Opis modelu<textarea name="description" rows="4" maxlength="3000"></textarea></label>
+              <label>Zdjęcie modelu<input type="file" name="image" accept="image/jpeg,image/png,image/webp"></label>
+              <label class="check-row public-check"><input type="checkbox" name="publicVisible"><span><strong>Pokaż ten model publicznie</strong><small>Model pojawi się na publicznej stronie klubu. W strefie członkowskiej jest widoczny zawsze.</small></span></label>
+              <div class="form-actions"><button class="button button-primary" type="submit">Zapisz model</button><button class="button button-secondary" id="cancel-editor" type="button">Anuluj</button></div>
+            </form>
+          </section>
+
+          <section class="panel">
+            <div class="panel-title"><div><span>Moje konstrukcje</span><h2>Mój hangar</h2></div><span class="count-badge" id="my-model-count">0</span></div>
+            <div id="my-models" class="model-grid compact"></div>
+          </section>
+
+          <section class="panel club-hangar">
+            <div class="panel-title"><div><span>Klubowa baza</span><h2>Modele członków</h2></div><span class="count-badge" id="club-model-count">0</span></div>
+            <p class="panel-intro">Wybierz pilota, aby zobaczyć jego modele, wyposażenie i dane techniczne — również modele niewidoczne publicznie.</p>
+            <div id="club-models" class="pilot-list"></div>
+          </section>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="member-footer"><a href="prywatnosc.html">Polityka prywatności</a></footer>
+
+  <div class="save-overlay" id="model-save-overlay" role="dialog" aria-modal="true" aria-labelledby="model-save-title" aria-describedby="model-save-status" hidden>
+    <div class="save-dialog">
+      <div class="save-spinner" aria-hidden="true"></div>
+      <h2 id="model-save-title">Dodajemy model do hangaru</h2>
+      <p id="model-save-status" aria-live="polite">Zapisywanie danych modelu…</p>
+      <small>Nie zamykaj tej strony. Zapis może potrwać chwilę, szczególnie przy większym zdjęciu.</small>
+    </div>
+  </div>
+
+  <div class="save-overlay confirmation-overlay" id="model-confirmation" role="dialog" aria-modal="true" aria-labelledby="model-confirmation-title" hidden>
+    <div class="confirmation-dialog">
+      <div class="confirmation-heading">
+        <span>Model zapisany</span>
+        <h2 id="model-confirmation-title">Sprawdź dodany model</h2>
+        <p>Upewnij się, że zdjęcie i dane wyglądają prawidłowo.</p>
+      </div>
+      <div class="confirmation-preview" id="model-confirmation-preview"></div>
+      <div class="confirmation-actions">
+        <button class="button button-secondary" id="model-confirmation-edit" type="button">Popraw model</button>
+        <button class="button button-primary" id="model-confirmation-done" type="button">Wszystko się zgadza</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+  <script src="lightbox.js" defer></script>
+  <script src="czlonkowie.js" type="module"></script>
+</body>
+</html>
