@@ -75,6 +75,15 @@ CREATE TABLE models (
   construction_materials TEXT
 );
 
+CREATE TABLE model_photos (
+  id TEXT PRIMARY KEY,
+  model_id TEXT NOT NULL REFERENCES models(id) ON DELETE CASCADE,
+  storage_key TEXT NOT NULL UNIQUE,
+  position INTEGER NOT NULL CHECK (position BETWEEN 0 AND 2),
+  created_at TEXT NOT NULL,
+  UNIQUE (model_id, position)
+);
+
 CREATE TABLE invitations (
   id TEXT PRIMARY KEY,
   email TEXT NOT NULL COLLATE NOCASE,
@@ -92,5 +101,6 @@ CREATE INDEX idx_oauth_states_expiry ON oauth_states(expires_at);
 CREATE INDEX idx_sessions_token ON sessions(token_hash);
 CREATE INDEX idx_models_member ON models(member_id, updated_at);
 CREATE INDEX idx_models_public ON models(public_visible, updated_at);
+CREATE INDEX idx_model_photos_model ON model_photos(model_id, position);
 CREATE INDEX idx_invitations_email ON invitations(email, created_at);
 CREATE INDEX idx_invitations_active ON invitations(expires_at, accepted_at, revoked_at);

@@ -14,6 +14,7 @@ const modelConfirmationPreview = $("#model-confirmation-preview");
 const modelConfirmationTitle = $("#model-confirmation-title");
 let modelSaveInProgress = false;
 let confirmedModel = null;
+let pendingPhotoUploadIds = [];
 const MODEL_FIELDS = [
   "name", "category", "buildType", "manufacturer", "designSource", "constructionMaterials",
   "scale", "wingspan", "weight", "propulsion", "motorEngine", "propeller", "esc", "bec",
@@ -135,13 +136,22 @@ function pilotAvatar(model, linked = false) {
     : `<div class="owner-avatar">${image}</div>`;
 }
 
+function modelGallery(model) {
+  const photos = model.photos?.length
+    ? model.photos
+    : model.coverUrl ? [{ id: "cover", url: model.coverUrl, position: 0 }] : [];
+  if (!photos.length) return '<div class="model-cover model-placeholder" aria-hidden="true">✈</div>';
+  return `<div class="model-photo-gallery photo-count-${photos.length}">${photos.map((photo, index) => `
+    <a class="model-photo-link" href="${escapeHtml(photo.url)}" data-lightbox title="Powiększ zdjęcie modelu${index ? ` (${index + 1})` : ""}">
+      <img class="model-cover" src="${escapeHtml(photo.url)}" alt="Model ${escapeHtml(model.name)}, zdjęcie ${index + 1}" loading="lazy">
+    </a>`).join("")}</div>`;
+}
+
 function modelCard(model, { includeActions = false, showOwner = true } = {}) {
   const owner = showOwner
     ? `<div class="model-owner">${pilotAvatar(model, true)}<span>Pilot: <strong>${escapeHtml(model.ownerName || "Klubowicz")}</strong></span></div>`
     : "";
-  const cover = model.coverUrl
-    ? `<a class="model-photo-link" href="${escapeHtml(model.coverUrl)}" data-lightbox title="Powiększ zdjęcie modelu"><img class="model-cover" src="${escapeHtml(model.coverUrl)}" alt="Model ${escapeHtml(model.name)}" loading="lazy"></a>`
-    : `<div class="model-cover model-placeholder" aria-hidden="true">✈</div>`;
+  const cover = modelGallery(model);
   const actions = includeActions && model.editable
     ? `<div class="model-actions"><button type="button" data-edit="${model.id}">Edytuj</button><button class="danger" type="button" data-delete="${model.id}">Usuń</button></div>`
     : "";
@@ -315,6 +325,7 @@ async function loadAdminOverview() {
 
 function openEditor(model = null) {
   modelForm.reset();
+  pendingPhotoUploadIds = [];
   $("#editor-title").textContent = model ? "Edytuj model" : "Dodaj model";
   if (model) {
     for (const key of ["id", ...MODEL_FIELDS]) {
@@ -322,6 +333,7 @@ function openEditor(model = null) {
     }
     modelForm.elements.publicVisible.checked = model.publicVisible;
   }
+  renderExistingModelPhotos(model?.photos || []);
   updateEquipmentVisibility();
   modelEditor.hidden = false;
   modelEditor.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -331,6 +343,21 @@ function closeEditor(force = false) {
   if (modelSaveInProgress && !force) return;
   modelEditor.hidden = true;
   modelForm.reset();
+  pendingPhotoUploadIds = [];
+  renderExistingModelPhotos([]);
+}
+
+function renderExistingModelPhotos(photos) {
+  const container = $("#existing-model-photos");
+  container.innerHTML = photos.length ? photos.map((photo, index) => `
+    <label class="existing-model-photo">
+      <img src="${escapeHtml(photo.url)}" alt="Zdjęcie ${index + 1}">
+      <span><input type="checkbox" name="deletePhoto" value="${escapeHtml(photo.id)}"> Usuń${index === 0 ? " zdjęcie okładkowe" : ""}</span>
+    </label>`).join("") : '<p class="empty-photo-note">Ten model nie ma jeszcze zdjęć.</p>';
+}
+
+function newUploadId() {
+  return crypto.randomUUID ? crypto.randomUUID() : `${Date.now().toString(16)}-${crypto.getRandomValues(new Uint32Array(2)).join("-")}`;
 }
 
 function setModelFormDisabled(disabled) {
@@ -376,12 +403,23 @@ async function saveModel(event) {
   if (modelSaveInProgress) return;
 
   const form = new FormData(modelForm);
+  const currentId = form.get("id");
+  const images = form.getAll("images").filter((file) => file instanceof File && file.size);
+  const deleteIds = form.getAll("deletePhoto");
+  const existingCount = currentId ? (state.models.find((model) => model.id === currentId)?.photos?.length || 0) : 0;
+  if (existingCount - deleteIds.length + images.length > 3) {
+    notify("Model może mieć maksymalnie 3 zdjęcia. Usuń część wybranych zdjęć.", true);
+    return;
+  }
+  if (pendingPhotoUploadIds.length !== images.length) {
+    pendingPhotoUploadIds = images.map(() => newUploadId());
+  }
   modelSaveInProgress = true;
   setModelFormDisabled(true);
   showSaveProgress("Zapisywanie danych modelu…");
 
   try {
-    const id = form.get("id");
+    const id = currentId;
     const wasCreated = !id;
     const body = {};
     for (const key of MODEL_FIELDS) body[key] = form.get(key);
@@ -393,12 +431,13 @@ async function saveModel(event) {
     // this record instead of creating a duplicate model.
     modelForm.elements.id.value = modelId;
 
-    const image = form.get("image");
-    if (image?.size) {
-      updateSaveProgress("Przesyłanie zdjęcia modelu…");
+    if (images.length || deleteIds.length) {
+      updateSaveProgress("Aktualizowanie zdjęć modelu…");
       const upload = new FormData();
-      upload.append("image", image);
-      await api(`/api/models/${modelId}/photo`, { method: "POST", body: upload });
+      images.forEach((image) => upload.append("images", image));
+      upload.append("uploadIds", JSON.stringify(pendingPhotoUploadIds));
+      upload.append("deleteIds", JSON.stringify(deleteIds));
+      await api(`/api/models/${modelId}/photos`, { method: "POST", body: upload });
     }
 
     updateSaveProgress("Odświeżanie hangaru…");
@@ -416,6 +455,10 @@ async function saveModel(event) {
     setModelFormDisabled(false);
   }
 }
+
+modelForm.elements.images.addEventListener("change", () => {
+  pendingPhotoUploadIds = [...modelForm.elements.images.files].map(() => newUploadId());
+});
 
 function updateEquipmentVisibility() {
   const propulsion = modelForm.elements.propulsion.value.toLowerCase();

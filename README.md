@@ -17,3 +17,7 @@ The deployed secrets and account-specific variables are intentionally not stored
 Do not deploy from an incomplete checkout. A production backup must include the active Worker version, D1 export, all KV media objects, and live static assets. Database dumps, sessions, member records, uploaded photos, `.dev.vars`, and Wrangler caches must never be committed.
 
 `schema/production.sql` contains schema only—no production rows or private member data.
+
+## Database migrations
+
+Apply numbered migrations in order before deploying Worker code that depends on them. Migration `0004_model_photos.sql` is additive: it creates the three-photo table and backfills every existing `models.cover_key` as photo position 0. The Worker continues updating `cover_key` for compatibility with the previous production version, which makes a staged rollout and rollback safe.

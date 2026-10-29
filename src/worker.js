@@ -10,6 +10,7 @@ var SESSION_COOKIE = "skm_session";
 var SESSION_DAYS = 30;
 var MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 var MAX_PORTRAIT_CHECK_BYTES = 1024 * 1024;
+var MAX_MODEL_PHOTOS = 3;
 var HttpError = class extends Error {
   static {
     __name(this, "HttpError");
@@ -360,13 +361,18 @@ function imageExtension(type) {
   return { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp" }[type] || null;
 }
 __name(imageExtension, "imageExtension");
-async function readImage(request) {
-  const form = await request.formData();
-  const file = form.get("image");
+function validateImage(file) {
   if (!(file instanceof File)) throw new HttpError(400, "Wybierz zdj\u0119cie.");
   const extension = imageExtension(file.type);
   if (!extension) throw new HttpError(400, "Dozwolone formaty zdj\u0119\u0107: JPG, PNG i WebP.");
   if (file.size > MAX_IMAGE_BYTES) throw new HttpError(400, "Zdj\u0119cie mo\u017Ce mie\u0107 maksymalnie 5 MB.");
+  return extension;
+}
+__name(validateImage, "validateImage");
+async function readImage(request) {
+  const form = await request.formData();
+  const file = form.get("image");
+  const extension = validateImage(file);
   return { file, extension, form };
 }
 __name(readImage, "readImage");
@@ -448,7 +454,15 @@ function modelInput(body) {
   };
 }
 __name(modelInput, "modelInput");
-function modelDto(row, viewerId = null) {
+function modelDto(row, viewerId = null, photoRows = []) {
+  const photos = photoRows.map((photo) => ({
+    id: photo.id,
+    url: `/media/${photo.storage_key}`,
+    position: photo.position
+  }));
+  if (!photos.length && row.cover_key) {
+    photos.push({ id: row.id, url: `/media/${row.cover_key}`, position: 0 });
+  }
   return {
     id: row.id,
     memberId: row.member_id,
@@ -486,7 +500,8 @@ function modelDto(row, viewerId = null) {
     equipment: row.equipment || "",
     description: row.description || "",
     publicVisible: Boolean(row.public_visible),
-    coverUrl: row.cover_key ? `/media/${row.cover_key}` : null,
+    photos,
+    coverUrl: photos[0]?.url || null,
     ownerName: row.display_name,
     ownerAvatarUrl: viewerId ? row.avatar_key ? `/media/${row.avatar_key}` : row.suppress_google_picture ? null : row.google_picture_url || null : row.profile_public ? row.avatar_key ? `/media/${row.avatar_key}` : row.suppress_google_picture ? null : row.google_picture_url || null : null,
     editable: viewerId === row.member_id,
@@ -494,6 +509,19 @@ function modelDto(row, viewerId = null) {
   };
 }
 __name(modelDto, "modelDto");
+async function modelPhotosByModel(env) {
+  const { results } = await env.DB.prepare(`
+    SELECT id, model_id, storage_key, position, created_at
+    FROM model_photos ORDER BY model_id, position
+  `).all();
+  const grouped = /* @__PURE__ */ new Map();
+  for (const photo of results) {
+    if (!grouped.has(photo.model_id)) grouped.set(photo.model_id, []);
+    grouped.get(photo.model_id).push(photo);
+  }
+  return grouped;
+}
+__name(modelPhotosByModel, "modelPhotosByModel");
 var MODEL_SELECT = `
   SELECT m.*, p.display_name, p.avatar_key, p.google_picture_url,
     p.suppress_google_picture, p.profile_public
@@ -501,17 +529,23 @@ var MODEL_SELECT = `
 `;
 async function listClubModels(request, env) {
   const member = await requireMember(request, env);
-  const { results } = await env.DB.prepare(`${MODEL_SELECT}
-    WHERE p.status = 'approved' ORDER BY p.display_name, m.updated_at DESC
-  `).all();
-  return json({ models: results.map((row) => modelDto(row, member.id)) });
+  const [{ results }, photos] = await Promise.all([
+    env.DB.prepare(`${MODEL_SELECT}
+      WHERE p.status = 'approved' ORDER BY p.display_name, m.updated_at DESC
+    `).all(),
+    modelPhotosByModel(env)
+  ]);
+  return json({ models: results.map((row) => modelDto(row, member.id, photos.get(row.id) || [])) });
 }
 __name(listClubModels, "listClubModels");
 async function listPublicModels(env) {
-  const { results } = await env.DB.prepare(`${MODEL_SELECT}
-    WHERE p.status = 'approved' AND m.public_visible = 1 ORDER BY m.updated_at DESC
-  `).all();
-  return json({ models: results.map((row) => modelDto(row)) }, 200, "public, max-age=60");
+  const [{ results }, photos] = await Promise.all([
+    env.DB.prepare(`${MODEL_SELECT}
+      WHERE p.status = 'approved' AND m.public_visible = 1 ORDER BY m.updated_at DESC
+    `).all(),
+    modelPhotosByModel(env)
+  ]);
+  return json({ models: results.map((row) => modelDto(row, null, photos.get(row.id) || [])) }, 200, "public, max-age=60");
 }
 __name(listPublicModels, "listPublicModels");
 async function createModel(request, env) {
@@ -636,21 +670,127 @@ async function deleteModel(request, env, modelId) {
   requireSameOrigin(request);
   const member = await requireMember(request, env);
   const model = await ownedModel(env, modelId, member.id);
-  if (model.cover_key) await env.MEDIA.delete(model.cover_key);
+  const { results: photos } = await env.DB.prepare(
+    "SELECT storage_key FROM model_photos WHERE model_id = ?"
+  ).bind(modelId).all();
   await env.DB.prepare("DELETE FROM models WHERE id = ?").bind(modelId).run();
+  const keys = new Set(photos.map((photo) => photo.storage_key));
+  if (model.cover_key) keys.add(model.cover_key);
+  await Promise.allSettled([...keys].map((key) => env.MEDIA.delete(key)));
   return json({ ok: true, message: "Model zosta\u0142 usuni\u0119ty." });
 }
 __name(deleteModel, "deleteModel");
+async function syncModelPhotos(request, env, modelId) {
+  requireSameOrigin(request);
+  const member = await requireMember(request, env);
+  await ownedModel(env, modelId, member.id);
+  const form = await request.formData();
+  const files = form.getAll("images").filter((value) => value instanceof File && value.size > 0);
+  let uploadIds;
+  let deleteIds;
+  try {
+    uploadIds = JSON.parse(String(form.get("uploadIds") || "[]"));
+    deleteIds = JSON.parse(String(form.get("deleteIds") || "[]"));
+  } catch {
+    throw new HttpError(400, "Nieprawid\u0142owe dane zdj\u0119\u0107.");
+  }
+  if (!Array.isArray(uploadIds) || uploadIds.length !== files.length || !Array.isArray(deleteIds)) {
+    throw new HttpError(400, "Nieprawid\u0142owe dane zdj\u0119\u0107.");
+  }
+  if (new Set(uploadIds).size !== uploadIds.length || uploadIds.some((id) => !/^[a-f0-9-]{16,64}$/i.test(id))) {
+    throw new HttpError(400, "Nieprawid\u0142owe identyfikatory zdj\u0119\u0107.");
+  }
+  const deleteSet = new Set(deleteIds.filter((id) => typeof id === "string"));
+  const { results: existing } = await env.DB.prepare(`
+    SELECT id, model_id, storage_key, position, created_at
+    FROM model_photos WHERE model_id = ? ORDER BY position
+  `).bind(modelId).all();
+  const existingById = new Map(existing.map((photo) => [photo.id, photo]));
+  const uploads = files.map((file, index) => {
+    const id = uploadIds[index];
+    const extension = validateImage(file);
+    return {
+      id,
+      file,
+      extension,
+      storage_key: `models/${member.id}/${modelId}/${id}.${extension}`
+    };
+  });
+  const finalRows = existing.filter((photo) => !deleteSet.has(photo.id)).map((photo) => ({ ...photo }));
+  for (const upload of uploads) {
+    const existingIndex = finalRows.findIndex((photo) => photo.id === upload.id);
+    if (existingIndex >= 0) {
+      finalRows[existingIndex].storage_key = upload.storage_key;
+    } else {
+      finalRows.push({ id: upload.id, model_id: modelId, storage_key: upload.storage_key, created_at: nowIso() });
+    }
+  }
+  if (finalRows.length > MAX_MODEL_PHOTOS) {
+    throw new HttpError(400, `Model mo\u017Ce mie\u0107 maksymalnie ${MAX_MODEL_PHOTOS} zdj\u0119cia.`);
+  }
+  finalRows.forEach((photo, position) => {
+    photo.position = position;
+  });
+  await Promise.all(uploads.map(async (upload) => env.MEDIA.put(
+    upload.storage_key,
+    await upload.file.arrayBuffer(),
+    { metadata: { contentType: upload.file.type } }
+  )));
+  try {
+    await env.DB.batch([
+      env.DB.prepare("DELETE FROM model_photos WHERE model_id = ?").bind(modelId),
+      ...finalRows.map((photo) => env.DB.prepare(`
+        INSERT INTO model_photos (id, model_id, storage_key, position, created_at)
+        VALUES (?, ?, ?, ?, ?)
+      `).bind(photo.id, modelId, photo.storage_key, photo.position, photo.created_at || nowIso())),
+      env.DB.prepare("UPDATE models SET cover_key = ?, updated_at = ? WHERE id = ?").bind(
+        finalRows[0]?.storage_key || null,
+        nowIso(),
+        modelId
+      )
+    ]);
+  } catch (error) {
+    await Promise.allSettled(
+      uploads
+        .filter((upload) => existingById.get(upload.id)?.storage_key !== upload.storage_key)
+        .map((upload) => env.MEDIA.delete(upload.storage_key))
+    );
+    throw error;
+  }
+  const finalKeys = new Set(finalRows.map((photo) => photo.storage_key));
+  await Promise.allSettled(
+    existing.filter((photo) => !finalKeys.has(photo.storage_key)).map((photo) => env.MEDIA.delete(photo.storage_key))
+  );
+  return json({
+    ok: true,
+    photos: finalRows.map((photo) => ({ id: photo.id, url: `/media/${photo.storage_key}`, position: photo.position })),
+    coverUrl: finalRows[0] ? `/media/${finalRows[0].storage_key}` : null
+  });
+}
+__name(syncModelPhotos, "syncModelPhotos");
 async function uploadModelPhoto(request, env, modelId) {
   requireSameOrigin(request);
   const member = await requireMember(request, env);
-  const model = await ownedModel(env, modelId, member.id);
+  await ownedModel(env, modelId, member.id);
   const { file, extension } = await readImage(request);
-  const key = `models/${member.id}/${modelId}/${crypto.randomUUID()}.${extension}`;
+  const { results: existing } = await env.DB.prepare(`
+    SELECT id, storage_key, position, created_at FROM model_photos
+    WHERE model_id = ? ORDER BY position
+  `).bind(modelId).all();
+  const primary = existing[0];
+  const photoId = primary?.id || crypto.randomUUID();
+  const key = `models/${member.id}/${modelId}/${photoId}.${extension}`;
   await env.MEDIA.put(key, await file.arrayBuffer(), { metadata: { contentType: file.type } });
-  await env.DB.prepare("UPDATE models SET cover_key = ?, updated_at = ? WHERE id = ?").bind(key, nowIso(), modelId).run();
-  if (model.cover_key) await env.MEDIA.delete(model.cover_key);
-  return json({ ok: true, coverUrl: `/media/${key}` });
+  await env.DB.batch([
+    env.DB.prepare(`
+      INSERT INTO model_photos (id, model_id, storage_key, position, created_at)
+      VALUES (?, ?, ?, 0, ?)
+      ON CONFLICT(id) DO UPDATE SET storage_key = excluded.storage_key, position = 0
+    `).bind(photoId, modelId, key, primary?.created_at || nowIso()),
+    env.DB.prepare("UPDATE models SET cover_key = ?, updated_at = ? WHERE id = ?").bind(key, nowIso(), modelId)
+  ]);
+  if (primary?.storage_key && primary.storage_key !== key) await env.MEDIA.delete(primary.storage_key);
+  return json({ ok: true, coverUrl: `/media/${key}`, photoId });
 }
 __name(uploadModelPhoto, "uploadModelPhoto");
 async function serveMedia(request, env, key) {
@@ -658,10 +798,15 @@ async function serveMedia(request, env, key) {
   const allowed = await env.DB.prepare(`
     SELECT 1 FROM members WHERE avatar_key = ? AND (profile_public = 1 OR ? != '')
     UNION ALL
+    SELECT 1 FROM model_photos mp
+      JOIN models m ON m.id = mp.model_id
+      JOIN members p ON p.id = m.member_id
+      WHERE mp.storage_key = ? AND ((m.public_visible = 1 AND p.status = 'approved') OR ? != '')
+    UNION ALL
     SELECT 1 FROM models m JOIN members p ON p.id = m.member_id
       WHERE m.cover_key = ? AND ((m.public_visible = 1 AND p.status = 'approved') OR ? != '')
     LIMIT 1
-  `).bind(key, session?.id || "", key, session?.id || "").first();
+  `).bind(key, session?.id || "", key, session?.id || "", key, session?.id || "").first();
   if (!allowed) throw new HttpError(404, "Nie znaleziono zdj\u0119cia.");
   const object = await env.MEDIA.getWithMetadata(key, "stream");
   if (!object.value) throw new HttpError(404, "Nie znaleziono zdj\u0119cia.");
@@ -856,6 +1001,8 @@ async function api(request, env, url) {
   if (match && method === "DELETE") return deleteModel(request, env, match[1]);
   match = pathname.match(/^\/api\/models\/([a-f0-9-]+)\/photo$/i);
   if (match && method === "POST") return uploadModelPhoto(request, env, match[1]);
+  match = pathname.match(/^\/api\/models\/([a-f0-9-]+)\/photos$/i);
+  if (match && method === "POST") return syncModelPhotos(request, env, match[1]);
   match = pathname.match(/^\/api\/admin\/members\/([a-f0-9-]+)\/(approve|reject)$/i);
   if (match && method === "POST") return decideMember(request, env, match[1], match[2]);
   match = pathname.match(/^\/api\/admin\/members\/([a-f0-9-]+)\/role$/i);

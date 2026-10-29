@@ -21,10 +21,19 @@ function pilotAvatar(model, linked = false) {
     : `<div class="owner-avatar">${image}</div>`;
 }
 
+function modelGallery(model) {
+  const photos = model.photos?.length
+    ? model.photos
+    : model.coverUrl ? [{ id: "cover", url: model.coverUrl, position: 0 }] : [];
+  if (!photos.length) return '<div class="model-cover model-placeholder" aria-hidden="true">✈</div>';
+  return `<div class="model-photo-gallery photo-count-${photos.length}">${photos.map((photo, index) => `
+    <a class="model-photo-link" href="${escapeHtml(photo.url)}" data-lightbox title="Powiększ zdjęcie modelu${index ? ` (${index + 1})` : ""}">
+      <img class="model-cover" src="${escapeHtml(photo.url)}" alt="Model ${escapeHtml(model.name)}, zdjęcie ${index + 1}" loading="lazy">
+    </a>`).join("")}</div>`;
+}
+
 function card(model, showOwner = true) {
-  const cover = model.coverUrl
-    ? `<a class="model-photo-link" href="${escapeHtml(model.coverUrl)}" data-lightbox title="Powiększ zdjęcie modelu"><img class="model-cover" src="${escapeHtml(model.coverUrl)}" alt="Model ${escapeHtml(model.name)}" loading="lazy"></a>`
-    : '<div class="model-cover model-placeholder" aria-hidden="true">✈</div>';
+  const cover = modelGallery(model);
   const owner = showOwner
     ? `<div class="model-owner">${pilotAvatar(model, true)}<span>Pilot: <strong>${escapeHtml(model.ownerName || "Klubowicz")}</strong></span></div>`
     : "";

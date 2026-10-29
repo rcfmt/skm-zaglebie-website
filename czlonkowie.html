@@ -225,7 +225,14 @@
 
               <label>Pozostałe wyposażenie i uwagi<textarea name="equipment" rows="3" maxlength="1200" placeholder="Wpisz wszystko, czego nie obejmują pola powyżej."></textarea></label>
               <label>Opis modelu<textarea name="description" rows="4" maxlength="3000"></textarea></label>
-              <label>Zdjęcie modelu<input type="file" name="image" accept="image/jpeg,image/png,image/webp"></label>
+              <fieldset class="model-photo-editor">
+                <legend>Zdjęcia modelu</legend>
+                <div id="existing-model-photos" class="existing-model-photos" aria-live="polite"></div>
+                <label>Dodaj zdjęcia (maksymalnie 3 łącznie)
+                  <input type="file" name="images" accept="image/jpeg,image/png,image/webp" multiple>
+                </label>
+                <small>Pierwsze zdjęcie jest okładką. Dozwolone formaty: JPG, PNG i WebP, maks. 5 MB każde.</small>
+              </fieldset>
               <label class="check-row public-check"><input type="checkbox" name="publicVisible"><span><strong>Pokaż ten model publicznie</strong><small>Model pojawi się na publicznej stronie klubu. W strefie członkowskiej jest widoczny zawsze.</small></span></label>
               <div class="form-actions"><button class="button button-primary" type="submit">Zapisz model</button><button class="button button-secondary" id="cancel-editor" type="button">Anuluj</button></div>
             </form>
